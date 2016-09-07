@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 导航栏 -->
+    <item name="appContent" type="id"/>
+    <item name="appLayout" type="id"/>
+    <item name="appBar" type="id"/>
+    <item name="appTitle" type="id"/>
+
+    <!-- 页面 -->
+    <item name="pageContainer" type="id"/>
+    <item name="pageContent" type="id"/>
+    <item name="pageLoading" type="id"/>
+    <item name="pageEmpty" type="id"/>
+    <item name="pageError" type="id"/>
+
+    <!-- RecyclerView -->
+    <item name="recycler" type="id"/>
+    <item name="refresh" type="id"/>
+    <item name="scroll" type="id"/>
+
+</resources>

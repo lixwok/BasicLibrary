@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- Dark text on light backgrounds -->
+    <color name="app_black_primary_text">#DD000000</color>
+    <color name="app_black_secondary_text">#89000000</color>
+    <color name="app_black_hint_text">#60000000</color>
+    <color name="app_black_disabled_text">@color/app_black_hint_text</color>
+    <color name="app_black_divider">#1E000000</color>
+
+    <!-- White text on dark backgrounds -->
+    <color name="app_white_primary_text">#FFFFFFFF</color>
+    <color name="app_white_secondary_text">#B2FFFFFF</color>
+    <color name="app_white_hint_text">#7FFFFFFF</color>
+    <color name="app_white_disabled_text">@color/app_white_hint_text</color>
+    <color name="app_white_divider">#1EFFFFFF</color>
+
+</resources>
