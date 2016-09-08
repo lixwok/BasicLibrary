@@ -10,7 +10,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/library" />
-            <option value="$PROJECT_DIR$/uikit" />
+            <option value="$PROJECT_DIR$/ormlibrary" />
+            <option value="$PROJECT_DIR$/thirdlibrary" />
+            <option value="$PROJECT_DIR$/viewlibrary" />
+            <option value="$PROJECT_DIR$/zxinglibrary" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

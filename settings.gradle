@@ -1,1 +1,1 @@
-include ':app', ':library', ':uikit'
+include ':app', ':library', ':viewlibrary', ':thirdlibrary', ':zxinglibrary', ':ormlibrary'

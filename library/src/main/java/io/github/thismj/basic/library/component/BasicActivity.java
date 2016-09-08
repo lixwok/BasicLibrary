@@ -32,7 +32,7 @@ import in.srain.cube.views.ptr.header.MaterialHeader;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import io.github.thismj.basic.library.R;
 import io.github.thismj.basic.library.utils.DensityUtil;
-import io.github.thismj.basic.library.utils.LayoutUtil;
+import io.github.thismj.basic.library.utils.ViewUtil;
 
 /**
  * ╭══╮　┌═════┐
@@ -213,7 +213,7 @@ public class BasicActivity extends AppCompatActivity {
      */
     private void initToolBar() {
         if (getActivityMode() != ACTIVITY_MODE_NONE) {
-            mToolBar = LayoutUtil.find(this, R.id.appBar);
+            mToolBar = ViewUtil.find(this, R.id.appBar);
             if (mToolBar != null && enableNavigationBack()) {
                 mToolBar.setNavigationIcon(R.drawable.ic_back_white);
                 mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -261,7 +261,7 @@ public class BasicActivity extends AppCompatActivity {
      */
     private void initRecyclerView() {
         if (getActivityMode() == ACTIVITY_MODE_SIMPLE_LIST) {
-            mRecyclerView = LayoutUtil.find(this, R.id.recycler);
+            mRecyclerView = ViewUtil.find(this, R.id.recycler);
             initRecyclerView(mRecyclerView);
         }
     }
@@ -270,8 +270,8 @@ public class BasicActivity extends AppCompatActivity {
      * 初始化配置下拉刷新组件
      */
     private void initPtrFrameLayout() {
-        mPtrFrameLayout = LayoutUtil.find(this, R.id.refresh);
-        AppBarLayout appBarLayout = LayoutUtil.find(this, R.id.appLayout);
+        mPtrFrameLayout = ViewUtil.find(this, R.id.refresh);
+        AppBarLayout appBarLayout = ViewUtil.find(this, R.id.appLayout);
 
         View header;
         switch (getPtrMode()) {
@@ -368,7 +368,7 @@ public class BasicActivity extends AppCompatActivity {
             winParams.flags |= (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS |
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             window.setAttributes(winParams);
-            ViewGroup contentView = LayoutUtil.find(this, android.R.id.content);
+            ViewGroup contentView = ViewUtil.find(this, android.R.id.content);
             View statusBarView = new View(this);
             ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     DensityUtil.getStatusBarHeight(this));
@@ -383,7 +383,6 @@ public class BasicActivity extends AppCompatActivity {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
             window.setNavigationBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-
         }
     }
 
@@ -393,12 +392,12 @@ public class BasicActivity extends AppCompatActivity {
     private void addPageContent() {
 
         if (getActivityMode() != ACTIVITY_MODE_SIMPLE_LIST && getContentLayout() != INVALID_LAYOUT) {
-            ViewGroup content = LayoutUtil.find(this, R.id.pageContent);
+            ViewGroup content = ViewUtil.find(this, R.id.pageContent);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             if (content != null) {
                 try {
-                    mContentView = LayoutUtil.inflater(this, getContentLayout(), content);
+                    mContentView = ViewUtil.inflater(this, getContentLayout(), content);
                     content.addView(mContentView, params);
                 } catch (Exception e) {
                     e.printStackTrace();
