@@ -29,6 +29,7 @@ import io.github.thismj.basic.library.utils.ViewUtil;
 
 import static io.github.thismj.basic.library.R.id.pageContainer;
 import static io.github.thismj.basic.library.component.BasicDelegate.INVALID_LAYOUT;
+import static io.github.thismj.basic.library.component.BasicDelegate.PAGE_MODE_SIMPLE_LIST;
 
 /**
  * ╭══╮　┌═════┐
@@ -90,7 +91,7 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
 
     @Override
     public int getPageMode() {
-        return BasicDelegate.PAGE_MODE_NONE;
+        return BasicDelegate.PAGE_MODE_DEFAULT;
     }
 
     final int getComponentLayout() {
@@ -285,7 +286,7 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
      * 配置页面是否可以下拉刷新,默认只有列表模式才能刷新
      */
     public boolean enableRefresh() {
-        return getPageMode() == BasicDelegate.PAGE_MODE_SIMPLE_LIST;
+        return getPageMode() == PAGE_MODE_SIMPLE_LIST;
     }
 
     /**
@@ -306,7 +307,7 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
      * 配置是否允许Toolbar随滚动消失等行为,默认只有列表模式打开
      */
     public boolean enableToolbarBehavior() {
-        return getPageMode() == BasicDelegate.PAGE_MODE_SIMPLE_LIST;
+        return getPageMode() == PAGE_MODE_SIMPLE_LIST;
     }
 
     /******************************************
@@ -322,7 +323,7 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
      ******************************************/
     @Override
     public int getItemLayout(int position) {
-        return 0;
+        return INVALID_LAYOUT;
     }
 
     @Override
@@ -337,6 +338,11 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
     @SuppressWarnings("unchecked")
     public <E, T extends ViewDataBinding> void setListData(List<E> data, BasicDelegate.SimpleRecycler<E, T> simpleRecycler) {
         mDelegate.setListData(data, simpleRecycler);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <E> void addListData(List<E> data) {
+        mDelegate.addListData(data);
     }
 
     /**

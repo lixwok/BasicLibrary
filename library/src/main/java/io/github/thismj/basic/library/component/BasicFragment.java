@@ -86,7 +86,7 @@ public class BasicFragment extends Fragment implements BasicDelegate.DelegateCal
      */
     @Override
     public int getPageMode() {
-        return BasicDelegate.PAGE_MODE_NONE;
+        return BasicDelegate.PAGE_MODE_DEFAULT;
     }
 
 
@@ -117,7 +117,7 @@ public class BasicFragment extends Fragment implements BasicDelegate.DelegateCal
      ******************************************/
     @Override
     public int getItemLayout(int position) {
-        return 0;
+        return INVALID_LAYOUT;
     }
 
     @Override
@@ -132,6 +132,11 @@ public class BasicFragment extends Fragment implements BasicDelegate.DelegateCal
     @SuppressWarnings("unchecked")
     public <E, T extends ViewDataBinding> void setListData(List<E> data, BasicDelegate.SimpleRecycler<E, T> simpleRecycler) {
         mDelegate.setListData(data, simpleRecycler);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <E> void addListData(List<E> data) {
+        mDelegate.addListData(data);
     }
 
     /**

@@ -54,7 +54,7 @@ public class BasicDelegate {
     /**
      * 默认的页面模式
      */
-    public final static int PAGE_MODE_NONE = 0;
+    public final static int PAGE_MODE_DEFAULT = 0;
 
     /**
      * 简单列表页面模式
@@ -75,14 +75,14 @@ public class BasicDelegate {
         mCallback = callback;
     }
 
-    @IntDef({PAGE_MODE_NONE, PAGE_MODE_SIMPLE_LIST, PAGE_MODE_SCROLLABLE})
+    @IntDef({PAGE_MODE_DEFAULT, PAGE_MODE_SIMPLE_LIST, PAGE_MODE_SCROLLABLE})
     public @interface PageMode {
 
     }
 
     public int getComponentLayout() {
         switch (getPageMode()) {
-            case PAGE_MODE_NONE:
+            case PAGE_MODE_DEFAULT:
                 return R.layout.component_none;
             case PAGE_MODE_SIMPLE_LIST:
                 return R.layout.component_simple_list;
@@ -95,7 +95,7 @@ public class BasicDelegate {
 
     @PageMode
     public int getPageMode() {
-        return mCallback == null ? PAGE_MODE_NONE : mCallback.getPageMode();
+        return mCallback == null ? PAGE_MODE_DEFAULT : mCallback.getPageMode();
     }
 
     /**
@@ -267,6 +267,15 @@ public class BasicDelegate {
             }
 
             ((SimpleRecyclerAdapter<E, T>) mRecyclerView.getAdapter()).setData(data);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <E> void addListData(List<E> data) {
+        if (getPageMode() == PAGE_MODE_SIMPLE_LIST && mRecyclerView != null) {
+            if (mRecyclerView.getAdapter() != null) {
+                ((SimpleRecyclerAdapter) mRecyclerView.getAdapter()).addData(data);
+            }
         }
     }
 
