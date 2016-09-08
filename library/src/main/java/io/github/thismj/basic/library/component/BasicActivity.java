@@ -1,8 +1,6 @@
 package io.github.thismj.basic.library.component;
 
-import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +8,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.MenuRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,16 +22,13 @@ import android.view.WindowManager;
 
 import java.util.List;
 
-import in.srain.cube.views.ptr.PtrClassicDefaultHeader;
-import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
-import in.srain.cube.views.ptr.PtrHandler;
-import in.srain.cube.views.ptr.PtrUIHandler;
-import in.srain.cube.views.ptr.header.MaterialHeader;
-import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import io.github.thismj.basic.library.R;
 import io.github.thismj.basic.library.utils.DensityUtil;
 import io.github.thismj.basic.library.utils.ViewUtil;
+
+import static io.github.thismj.basic.library.R.id.pageContainer;
+import static io.github.thismj.basic.library.component.BasicDelegate.INVALID_LAYOUT;
 
 /**
  * ╭══╮　┌═════┐
@@ -46,29 +42,7 @@ import io.github.thismj.basic.library.utils.ViewUtil;
  * @date 2016-09-06 10:02
  */
 
-public class BasicActivity extends AppCompatActivity {
-
-    private final static int INVALID_LAYOUT = -1;
-
-    /**
-     * 不带有toolbar的activity模式
-     */
-    public final static int ACTIVITY_MODE_NONE = 0;
-
-    /**
-     * 带有toolbar的activity
-     */
-    public final static int ACTIVITY_MODE_WITH_TOOLBAR = 1;
-
-    /**
-     * 简单列表页的activity
-     */
-    public final static int ACTIVITY_MODE_SIMPLE_LIST = 2;
-
-    /**
-     * ScrollView包裹的的activity
-     */
-    public final static int ACTIVITY_MODE_PAGE_SCROLLABLE = 3;
+public class BasicActivity extends AppCompatActivity implements BasicDelegate.DelegateCallback {
 
     /**
      * 默认Activity切换动画
@@ -95,18 +69,11 @@ public class BasicActivity extends AppCompatActivity {
      */
     public final static int PENDING_TRANSITION_ZOOM = 4;
 
-    private PtrFrameLayout mPtrFrameLayout;
-
     private Toolbar mToolBar;
 
-    private RecyclerView mRecyclerView;
+    private CoordinatorLayout mCoordinatorLayout;
 
-    private View mContentView;
-
-    /**
-     * appBarLayout偏移量
-     */
-    private int mAppBarOffset = -1;
+    private BasicDelegate mDelegate;
 
     /**
      * 是否可以进入这个界面
@@ -115,45 +82,33 @@ public class BasicActivity extends AppCompatActivity {
         return true;
     }
 
-    @IntDef({ACTIVITY_MODE_NONE, ACTIVITY_MODE_WITH_TOOLBAR,
-                    ACTIVITY_MODE_SIMPLE_LIST, ACTIVITY_MODE_PAGE_SCROLLABLE})
-    public @interface ActivityMode {
-
-    }
-
     @IntDef({PENDING_TRANSITION_DEFAULT, PENDING_TRANSITION_SLIDE, PENDING_TRANSITION_BOTTOM
                     , PENDING_TRANSITION_FADE, PENDING_TRANSITION_ZOOM})
     public @interface TransitionMode {
 
     }
 
-    @ActivityMode
-    public int getActivityMode() {
-        return ACTIVITY_MODE_WITH_TOOLBAR;
+    @Override
+    public int getPageMode() {
+        return BasicDelegate.PAGE_MODE_NONE;
     }
 
+    final int getComponentLayout() {
+        return mDelegate.getComponentLayout();
+    }
+
+    /**
+     * 重写此方法设置页面内容布局,列表页模式无需重写
+     */
     public int getContentLayout() {
         return INVALID_LAYOUT;
-    }
-
-    final int getLayout() {
-        switch (getActivityMode()) {
-            case ACTIVITY_MODE_NONE:
-                return R.layout.activity_none;
-            case ACTIVITY_MODE_WITH_TOOLBAR:
-                return R.layout.activity_with_toolbar;
-            case ACTIVITY_MODE_SIMPLE_LIST:
-                return R.layout.activity_list;
-            case ACTIVITY_MODE_PAGE_SCROLLABLE:
-                return R.layout.activity_scrollable;
-            default:
-                return R.layout.activity_none;
-        }
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mDelegate = new BasicDelegate(this, this);
 
         switch (getTransitionMode()) {
             case PENDING_TRANSITION_DEFAULT:
@@ -177,10 +132,19 @@ public class BasicActivity extends AppCompatActivity {
         }
 
         //设置容器布局
-        setContentView(getLayout());
+        setContentView(R.layout.activity_basic);
 
-        //添加内容布局
+        //添加页面模式布局
+        addComponentContent();
+
+        //添加页面内容布局
         addPageContent();
+
+        //变色透明状态栏设置
+        immerseStatus();
+
+        //Toolbar初始化
+        initToolBar();
 
         initViews();
     }
@@ -188,6 +152,11 @@ public class BasicActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
     }
 
     @Override
@@ -199,51 +168,43 @@ public class BasicActivity extends AppCompatActivity {
      * 初始化Views
      */
     private void initViews() {
-        immerseStatus();
-
-        initToolBar();
-
-        initRecyclerView();
-
-        initPtrFrameLayout();
+        mDelegate.initViews(mCoordinatorLayout);
     }
 
     /**
      * 初始化ToolBar
      */
     private void initToolBar() {
-        if (getActivityMode() != ACTIVITY_MODE_NONE) {
-            mToolBar = ViewUtil.find(this, R.id.appBar);
-            if (mToolBar != null && enableNavigationBack()) {
-                mToolBar.setNavigationIcon(R.drawable.ic_back_white);
-                mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        finish();
-                    }
-                });
-
-                AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolBar.getLayoutParams();
-
-                if (enableToolbarBehavior()) {
-                    params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                            | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
-                            | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-                } else {
-                    params.setScrollFlags(0);
+        mToolBar = ViewUtil.find(this, R.id.appBar);
+        if (mToolBar != null && enableNavigationBack()) {
+            mToolBar.setNavigationIcon(R.drawable.ic_back_white);
+            mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
                 }
+            });
 
-                mToolBar.setLayoutParams(params);
+            AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolBar.getLayoutParams();
 
-                initToolBar(mToolBar);
+            if (enableToolbarBehavior()) {
+                params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                        | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+                        | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+            } else {
+                params.setScrollFlags(0);
             }
+
+            mToolBar.setLayoutParams(params);
+
+            initToolBar(mToolBar);
         }
     }
 
     /**
      * 重写此方法处理刷新逻辑,完成之后调用{@link #refreshComplete()}
      */
-    protected void onRefresh(PtrFrameLayout ptrFrameLayout) {
+    public void onRefresh(PtrFrameLayout ptrFrameLayout) {
 
     }
 
@@ -251,106 +212,7 @@ public class BasicActivity extends AppCompatActivity {
      * 调用此方法刷新完成
      */
     protected void refreshComplete() {
-        if (mPtrFrameLayout != null) {
-            mPtrFrameLayout.refreshComplete();
-        }
-    }
-
-    /**
-     * 列表页初始化RecyclerView
-     */
-    private void initRecyclerView() {
-        if (getActivityMode() == ACTIVITY_MODE_SIMPLE_LIST) {
-            mRecyclerView = ViewUtil.find(this, R.id.recycler);
-            initRecyclerView(mRecyclerView);
-        }
-    }
-
-    /**
-     * 初始化配置下拉刷新组件
-     */
-    private void initPtrFrameLayout() {
-        mPtrFrameLayout = ViewUtil.find(this, R.id.refresh);
-        AppBarLayout appBarLayout = ViewUtil.find(this, R.id.appLayout);
-
-        View header;
-        switch (getPtrMode()) {
-            case 0:
-                header = obtainClassicDefault();
-                break;
-            case 1:
-                header = obtainMaterial();
-                break;
-            case 2:
-                header = obtainStoreHouse();
-                break;
-            default:
-                header = null;
-        }
-
-        if (header != null) {
-            mPtrFrameLayout.setHeaderView(header);
-            mPtrFrameLayout.addPtrUIHandler((PtrUIHandler) header);
-            mPtrFrameLayout.disableWhenHorizontalMove(true);
-            mPtrFrameLayout.setKeepHeaderWhenRefresh(true);
-            mPtrFrameLayout.setPtrHandler(new PtrHandler() {
-                @Override
-                public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                    return mAppBarOffset == 0 && PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-                }
-
-                @Override
-                public void onRefreshBegin(PtrFrameLayout frame) {
-                    onRefresh(frame);
-                }
-            });
-        }
-
-        if (appBarLayout != null) {
-            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-                @Override
-                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                    mAppBarOffset = verticalOffset;
-                }
-            });
-        }
-    }
-
-    /**
-     * Ptr StoreHouse风格的头部实现
-     */
-    private StoreHouseHeader obtainStoreHouse() {
-        mPtrFrameLayout.setPinContent(false);
-
-        final StoreHouseHeader header = new StoreHouseHeader(this);
-        header.setPadding(0, DensityUtil.dp2px(20), 0, 0);
-        header.initWithString(getString(R.string.app_name));
-        header.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        return header;
-    }
-
-    /**
-     * Ptr Material Design风格的头部实现
-     */
-    private MaterialHeader obtainMaterial() {
-        mPtrFrameLayout.setPinContent(true);
-
-        final MaterialHeader header = new MaterialHeader(this);
-        header.setPadding(0, DensityUtil.dp2px(20), 0, 0);
-        header.setColorSchemeColors(new int[]{ContextCompat.getColor(this, R.color.colorPrimary)});
-        return header;
-    }
-
-    /**
-     * Ptr 经典下拉刷新实现
-     */
-    private PtrClassicDefaultHeader obtainClassicDefault() {
-        mPtrFrameLayout.setPinContent(false);
-        return new PtrClassicDefaultHeader(this);
-    }
-
-    private int getPtrMode() {
-        return enableRefresh() ? 2 : -1;
+        mDelegate.refreshComplete();
     }
 
     /**
@@ -387,28 +249,23 @@ public class BasicActivity extends AppCompatActivity {
     }
 
     /**
-     * 添加页面内容,列表页模式除外
+     * 添加对应页面模式布局
      */
-    private void addPageContent() {
+    private void addComponentContent() {
 
-        if (getActivityMode() != ACTIVITY_MODE_SIMPLE_LIST && getContentLayout() != INVALID_LAYOUT) {
-            ViewGroup content = ViewUtil.find(this, R.id.pageContent);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            if (content != null) {
-                try {
-                    mContentView = ViewUtil.inflater(this, getContentLayout(), content);
-                    content.addView(mContentView, params);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        mCoordinatorLayout = ViewUtil.find(this, pageContainer);
+
+        if (mCoordinatorLayout != null) {
+            View componentView = ViewUtil.inflater(this, getComponentLayout(), mCoordinatorLayout);
+            mCoordinatorLayout.addView(componentView);
         }
     }
 
-    @Override
-    public void onContentChanged() {
-        super.onContentChanged();
+    /**
+     * 添加页面内容,列表页模式除外
+     */
+    private void addPageContent() {
+        mDelegate.addPageContent(mCoordinatorLayout);
     }
 
     /**
@@ -416,24 +273,19 @@ public class BasicActivity extends AppCompatActivity {
      */
     @SuppressWarnings("unchecked")
     public <T extends ViewDataBinding> T getBindView() {
-        return getBindView(mContentView);
+        return mDelegate.getBindView();
     }
 
     @SuppressWarnings("unchecked")
     public <T extends ViewDataBinding> T getBindView(View root) {
-        try {
-            return root == null ? null : (T) DataBindingUtil.bind(root);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return mDelegate.getBindView(root);
     }
 
     /**
      * 配置页面是否可以下拉刷新,默认只有列表模式才能刷新
      */
     public boolean enableRefresh() {
-        return getActivityMode() == ACTIVITY_MODE_SIMPLE_LIST;
+        return getPageMode() == BasicDelegate.PAGE_MODE_SIMPLE_LIST;
     }
 
     /**
@@ -454,7 +306,7 @@ public class BasicActivity extends AppCompatActivity {
      * 配置是否允许Toolbar随滚动消失等行为,默认只有列表模式打开
      */
     public boolean enableToolbarBehavior() {
-        return getActivityMode() == ACTIVITY_MODE_SIMPLE_LIST;
+        return getPageMode() == BasicDelegate.PAGE_MODE_SIMPLE_LIST;
     }
 
     /******************************************
@@ -468,19 +320,12 @@ public class BasicActivity extends AppCompatActivity {
     /******************************************
      * * 重写以下方法配置列表页
      ******************************************/
-
-    //item布局
-    public int getItemLayout() {
-        return INVALID_LAYOUT;
+    @Override
+    public int getItemLayout(int position) {
+        return 0;
     }
 
-    //item绑定数据,可以通过data bind获取itemView的ViewDataBind对象
-    public <E> void bindItemData(View itemView, E entity, int position) {
-//        ViewDataBinding binding = getBindView(itemView);
-//        ViewSetUtil.setText(binding.text,"text");
-    }
-
-    //初始化recyclerView的LayoutManager,分割线等
+    @Override
     public void initRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -490,44 +335,8 @@ public class BasicActivity extends AppCompatActivity {
      * 填充列表页数据集
      */
     @SuppressWarnings("unchecked")
-    public <E> void setListData(List<E> data) {
-        if (getActivityMode() == ACTIVITY_MODE_SIMPLE_LIST && mRecyclerView != null) {
-
-            if (mRecyclerView.getAdapter() == null) {
-                SimpleRecyclerAdapter<E> mAdapter = new SimpleRecyclerAdapter<>(this);
-                mRecyclerView.setAdapter(mAdapter);
-            }
-
-            ((SimpleRecyclerAdapter<E>) mRecyclerView.getAdapter()).setData(data);
-        }
-    }
-
-    /**
-     * 列表页adapter
-     */
-    public class SimpleRecyclerAdapter<E> extends BasicRecyclerAdapter<E, SimpleRecyclerAdapter.SimpleRecyclerHolder> {
-
-
-        public SimpleRecyclerAdapter(Context context) {
-            super(context);
-        }
-
-        @Override
-        public int getViewType(int position) {
-            return getItemLayout();
-        }
-
-        public class SimpleRecyclerHolder extends BasicRecyclerHolder<E> {
-
-            public SimpleRecyclerHolder(View itemView) {
-                super(itemView);
-            }
-
-            @Override
-            public void bindViewHolder(E model, int position) {
-                bindItemData(itemView, model, position);
-            }
-        }
+    public <E, T extends ViewDataBinding> void setListData(List<E> data, BasicDelegate.SimpleRecycler<E, T> simpleRecycler) {
+        mDelegate.setListData(data, simpleRecycler);
     }
 
     /**

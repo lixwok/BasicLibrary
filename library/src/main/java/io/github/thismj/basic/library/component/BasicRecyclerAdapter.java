@@ -11,6 +11,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.thismj.basic.library.utils.ViewUtil;
+
 
 /**
  * 　 ∧__∧
@@ -76,7 +78,7 @@ public abstract class BasicRecyclerAdapter<M, H extends BasicRecyclerHolder> ext
         try {
             Constructor c = mHolder.getDeclaredConstructor(getClass(), View.class);
 
-            holder = (H) c.newInstance(this, LayoutUtil.inflater(mContext, viewType, parent));
+            holder = (H) c.newInstance(this, ViewUtil.inflater(mContext, viewType, parent));
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();

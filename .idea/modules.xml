@@ -7,7 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/ormlibrary/ormlibrary.iml" filepath="$PROJECT_DIR$/ormlibrary/ormlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/thirdlibrary/thirdlibrary.iml" filepath="$PROJECT_DIR$/thirdlibrary/thirdlibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/viewlibrary/viewlibrary.iml" filepath="$PROJECT_DIR$/viewlibrary/viewlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uilibrary/uilibrary.iml" filepath="$PROJECT_DIR$/uilibrary/uilibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/zxinglibrary/zxinglibrary.iml" filepath="$PROJECT_DIR$/zxinglibrary/zxinglibrary.iml" />
     </modules>
   </component>

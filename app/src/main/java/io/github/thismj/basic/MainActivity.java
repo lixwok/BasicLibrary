@@ -2,15 +2,18 @@ package io.github.thismj.basic;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import in.srain.cube.views.ptr.PtrFrameLayout;
 import io.github.thismj.basic.databinding.ItemMainBinding;
 import io.github.thismj.basic.entity.MainEntity;
 import io.github.thismj.basic.library.component.BasicActivity;
+import io.github.thismj.basic.library.component.BasicDelegate;
+import io.github.thismj.basic.library.utils.ViewUtil;
 
 public class MainActivity extends BasicActivity {
 
@@ -27,40 +30,45 @@ public class MainActivity extends BasicActivity {
             entities.add(entity);
         }
 
-        setListData(entities);
+        setListData(entities, new BasicDelegate.SimpleRecycler<MainEntity, ItemMainBinding>() {
+
+            @Override
+            public void bindItemData(ItemMainBinding bind, MainEntity model, int position) {
+                ViewUtil.setText(bind.tvName, model.name);
+                ViewUtil.setText(bind.tvDes, model.des);
+            }
+
+            @Override
+            public void onItemClick(MainEntity model, int position) {
+                startActivity(new Intent(MainActivity.this, SecondActivity.class));
+            }
+        });
 
         setToolBarTitle("主页");
     }
 
     @Override
-    public int getActivityMode() {
-        return ACTIVITY_MODE_SIMPLE_LIST;
+    public boolean enableNavigationBack() {
+        return false;
     }
 
     @Override
-    public int getItemLayout() {
-        return R.layout.item_main;
-    }
-
-    @Override
-    public <E> void bindItemData(View itemView, E entity, int position) {
-        super.bindItemData(itemView, entity, position);
-
-        ItemMainBinding bind = getBindView(itemView);
-
-        bind.tvName.setText(((MainEntity) entity).name);
-        bind.tvDes.setText(((MainEntity) entity).des);
-
-        bind.getRoot().setOnClickListener(new View.OnClickListener() {
+    public void onRefresh(PtrFrameLayout ptrFrameLayout) {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SecondActivity.class));
+            public void run() {
+                refreshComplete();
             }
-        });
+        }, 3000);
     }
 
     @Override
-    public int getTransitionMode() {
-        return PENDING_TRANSITION_ZOOM;
+    public int getPageMode() {
+        return BasicDelegate.PAGE_MODE_SIMPLE_LIST;
+    }
+
+    @Override
+    public int getItemLayout(int position) {
+        return R.layout.item_main;
     }
 }

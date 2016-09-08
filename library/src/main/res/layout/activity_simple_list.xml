@@ -7,6 +7,6 @@
 
     <include layout="@layout/include_tool_bar"/>
 
-    <include layout="@layout/component_none"/>
+    <include layout="@layout/component_simple_list"/>
 
 </android.support.design.widget.CoordinatorLayout>

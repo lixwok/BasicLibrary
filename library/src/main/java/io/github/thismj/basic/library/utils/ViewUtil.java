@@ -34,8 +34,6 @@ import android.widget.TextView;
 @SuppressWarnings("unused")
 public class ViewUtil {
 
-    private static long mLastTimeMillis;
-
     public static void showLoading(ViewGroup content) {
 
         ViewGroup.LayoutParams params;
@@ -95,35 +93,35 @@ public class ViewUtil {
     /**
      * {@link TextView#setText(CharSequence)}
      */
-    public void setText(TextView view, CharSequence text) {
+    public static void setText(TextView view, CharSequence text) {
         if (checkNotNull(view)) view.setText(text);
     }
 
     /**
      * {@link TextView#setText(int)}
      */
-    public void setText(TextView view, @StringRes int id) {
+    public static void setText(TextView view, @StringRes int id) {
         if (checkNotNull(view)) view.setText(id);
     }
 
     /**
      * {@link TextView#setTextColor(int)}
      */
-    public void setTextColor(TextView view, int color) {
+    public static void setTextColor(TextView view, int color) {
         if (checkNotNull(view)) view.setTextColor(color);
     }
 
     /**
      * {@link TextView#setTextSize(float)}
      */
-    public void setTextSize(TextView view, float dp) {
+    public static void setTextSize(TextView view, float dp) {
         if (checkNotNull(view)) view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, dp);
     }
 
     /**
      * {@link View#setOnClickListener(View.OnClickListener)}
      */
-    public void setOnClick(View view, final View.OnClickListener onClickListener) {
+    public static void setOnClick(View view, final View.OnClickListener onClickListener) {
         if (checkNotNull(view) && checkNotNull(onClickListener)) {
             view.setOnClickListener(new ForbidFastClickListener() {
                 @Override
@@ -137,35 +135,35 @@ public class ViewUtil {
     /**
      * {@link View#setVisibility(int)}
      */
-    public void setVisibility(View view, boolean visible) {
+    public static void setVisibility(View view, boolean visible) {
         if (checkNotNull(view)) view.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     /**
      * {@link ImageView#setImageResource(int)}
      */
-    public void setImageResource(ImageView view, @DrawableRes int id) {
+    public static void setImageResource(ImageView view, @DrawableRes int id) {
         if (checkNotNull(view)) view.setImageResource(id);
     }
 
     /**
      * {@link ImageView#setImageBitmap(Bitmap)}
      */
-    public void setImageBitmap(ImageView view, Bitmap bitmap) {
+    public static void setImageBitmap(ImageView view, Bitmap bitmap) {
         if (checkNotNull(view)) view.setImageBitmap(bitmap);
     }
 
     /**
      * {@link View#setBackgroundColor(int)}
      */
-    public void setBackgroundColor(View view, int color) {
+    public static void setBackgroundColor(View view, int color) {
         if (checkNotNull(view)) view.setBackgroundColor(color);
     }
 
     /**
      * {@link View#setBackgroundResource(int)}
      */
-    public void setBackgroundResource(View view, @DrawableRes int color) {
+    public static void setBackgroundResource(View view, @DrawableRes int color) {
         if (checkNotNull(view)) view.setBackgroundResource(color);
     }
 
@@ -173,36 +171,38 @@ public class ViewUtil {
      * {@link View#setBackground(Drawable)}
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void setBackground(View view, Drawable drawable) {
+    public static void setBackground(View view, Drawable drawable) {
         if (checkNotNull(view)) view.setBackground(drawable);
     }
 
     /**
      * {@link RadioButton#setChecked(boolean)}
      */
-    public void setChecked(RadioButton view, boolean checked) {
+    public static void setChecked(RadioButton view, boolean checked) {
         if (checkNotNull(view)) view.setChecked(checked);
     }
 
     /**
      * {@link CheckBox#setChecked(boolean)}
      */
-    public void setChecked(CheckBox view, boolean checked) {
+    public static void setChecked(CheckBox view, boolean checked) {
         if (checkNotNull(view)) view.setChecked(checked);
     }
 
     /**
      * {@link CheckedTextView#setChecked(boolean)}
      */
-    public void setChecked(CheckedTextView view, boolean checked) {
+    public static void setChecked(CheckedTextView view, boolean checked) {
         if (checkNotNull(view)) view.setChecked(checked);
     }
 
-    private boolean checkNotNull(Object object) {
+    private static boolean checkNotNull(Object object) {
         return object != null;
     }
 
-    public abstract class ForbidFastClickListener implements View.OnClickListener {
+    public static abstract class ForbidFastClickListener implements View.OnClickListener {
+
+        private static long mLastTimeMillis;
 
         private long DELAY_TIME;
 
