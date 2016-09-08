@@ -49,7 +49,7 @@ public class MainActivity extends BasicActivity {
 
     @Override
     public boolean enableNavigationBack() {
-        return false;
+        return true;
     }
 
     @Override

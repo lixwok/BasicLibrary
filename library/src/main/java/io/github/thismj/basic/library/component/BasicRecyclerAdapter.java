@@ -20,7 +20,7 @@ import io.github.thismj.basic.library.utils.ViewUtil;
  * 　｜つ／(＿＿＿
  * / └-(＿＿＿_／
  * ￣￣￣￣
- * 组件默认实现接口
+ * RecyclerView adapter
  *
  * @author tangmingjian
  * @version v1.0

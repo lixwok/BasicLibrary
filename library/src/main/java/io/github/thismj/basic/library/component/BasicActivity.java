@@ -177,14 +177,16 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
      */
     private void initToolBar() {
         mToolBar = ViewUtil.find(this, R.id.appBar);
-        if (mToolBar != null && enableNavigationBack()) {
-            mToolBar.setNavigationIcon(R.drawable.ic_back_white);
-            mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    finish();
-                }
-            });
+        if (mToolBar != null) {
+            if (enableNavigationBack()) {
+                mToolBar.setNavigationIcon(R.drawable.ic_back_white);
+                mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
+                    }
+                });
+            }
 
             AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolBar.getLayoutParams();
 

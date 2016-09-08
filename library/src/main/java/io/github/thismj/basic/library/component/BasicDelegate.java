@@ -22,6 +22,7 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
 import io.github.thismj.basic.library.R;
 import io.github.thismj.basic.library.utils.DensityUtil;
 import io.github.thismj.basic.library.utils.ViewUtil;
+import io.github.thismj.basic.uilibrary.recyclerview.BLRecyclerView;
 
 
 /**
@@ -66,7 +67,7 @@ public class BasicDelegate {
      */
     public final static int PAGE_MODE_SCROLLABLE = 2;
 
-    private RecyclerView mRecyclerView;
+    private BLRecyclerView mRecyclerView;
 
     private PtrFrameLayout mPtrFrameLayout;
 
