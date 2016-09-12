@@ -35,9 +35,24 @@ import android.widget.TextView;
 public class ViewUtil {
 
     public static void showLoading(ViewGroup content) {
+        hideChildrenView(content);
+    }
 
-        ViewGroup.LayoutParams params;
+    public static void showEmpty() {
 
+    }
+
+    public static void showContent() {
+
+    }
+
+    public static void hideChildrenView(ViewGroup content) {
+        if (checkNotNull(content)) {
+            for (int index = 0; index < content.getChildCount(); index++) {
+                View child = content.getChildAt(index);
+                setVisibility(child, false);
+            }
+        }
     }
 
     public static View inflater(Context context, @LayoutRes int id, ViewGroup parent) {

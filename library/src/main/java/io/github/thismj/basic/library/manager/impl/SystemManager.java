@@ -8,8 +8,10 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,5 +127,54 @@ public class SystemManager extends BasicManager {
      */
     public void setInitialized(boolean initialized) {
         isInitialized = initialized;
+    }
+
+    /**
+     * 获取系统缓存大小 单位:MB
+     */
+    public static float getCacheSize(Context context) {
+        float size = getFileSize(context.getCacheDir());
+
+        BigDecimal b = new BigDecimal(size / 1024 / 1024);
+        return b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
+    /**
+     * 获取单个文件大小 单位:B
+     */
+    public static float getFileSize(File file) {
+        float size = 0.0f;
+        for (File item : file.listFiles()) {
+            if (item != null) {
+                if (item.isDirectory()) {
+                    size += getFileSize(item);
+                } else {
+                    size += item.length();
+                }
+            }
+        }
+        return size;
+    }
+
+    /**
+     * 清除系统缓存
+     */
+    public static boolean clearCache(Context context) {
+        return deleteFile(context.getCacheDir());
+    }
+
+    /**
+     * 递归删除文件
+     */
+    public static boolean deleteFile(File file) {
+        boolean result = true;
+        for (File item : file.listFiles()) {
+            if (item != null && item.isFile()) {
+                result = item.delete();
+            } else {
+                result = deleteFile(item);
+            }
+        }
+        return result;
     }
 }

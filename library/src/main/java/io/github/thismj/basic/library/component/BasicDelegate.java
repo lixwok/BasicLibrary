@@ -45,8 +45,6 @@ public class BasicDelegate {
 
     private DelegateCallback mCallback;
 
-    private View mContentView;
-
     /**
      * appBarLayout偏移量
      */
@@ -70,6 +68,8 @@ public class BasicDelegate {
     private BLRecyclerView mRecyclerView;
 
     private PtrFrameLayout mPtrFrameLayout;
+
+    private View mContentView;
 
     public BasicDelegate(Context context, DelegateCallback callback) {
         mContext = context;
@@ -115,6 +115,8 @@ public class BasicDelegate {
                     e.printStackTrace();
                 }
             }
+        } else {
+            mContentView = mPtrFrameLayout;
         }
     }
 
