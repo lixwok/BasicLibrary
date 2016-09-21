@@ -32,6 +32,6 @@ public class SecondActivity extends BasicActivity {
 
     @Override
     public int getTransitionMode() {
-        return PENDING_TRANSITION_BOTTOM;
+        return PENDING_TRANSITION_ZOOM;
     }
 }

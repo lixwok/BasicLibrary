@@ -56,9 +56,6 @@ public class BasicFragment extends Fragment implements BasicDelegate.DelegateCal
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //添加页面内容布局
-        addPageContent(view);
-
         //初始化Views
         initViews(view);
     }
@@ -72,13 +69,6 @@ public class BasicFragment extends Fragment implements BasicDelegate.DelegateCal
      */
     public int getContentLayout() {
         return INVALID_LAYOUT;
-    }
-
-    /**
-     * 添加页面内容,列表页模式除外
-     */
-    private void addPageContent(View view) {
-        mDelegate.addPageContent(view);
     }
 
     /**

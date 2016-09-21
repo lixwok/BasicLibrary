@@ -69,7 +69,7 @@ public class BasicDelegate {
 
     private PtrFrameLayout mPtrFrameLayout;
 
-    private View mContentView;
+    private ViewGroup mContentView;
 
     public BasicDelegate(Context context, DelegateCallback callback) {
         mContext = context;
@@ -79,6 +79,10 @@ public class BasicDelegate {
     @IntDef({PAGE_MODE_DEFAULT, PAGE_MODE_SIMPLE_LIST, PAGE_MODE_SCROLLABLE})
     public @interface PageMode {
 
+    }
+
+    public ViewGroup getContentView() {
+        return mContentView;
     }
 
     public int getComponentLayout() {
@@ -102,21 +106,19 @@ public class BasicDelegate {
     /**
      * 添加页面内容,列表页模式除外
      */
-    public void addPageContent(View root) {
+    public void addPageContent(View content) {
         if (getPageMode() != PAGE_MODE_SIMPLE_LIST) {
-            ViewGroup content = ViewUtil.find(root, R.id.pageContent);
+            mContentView = ViewUtil.find(content, R.id.pageContent);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            if (content != null && mCallback != null) {
+            if (mContentView != null && mCallback != null) {
                 try {
-                    mContentView = ViewUtil.inflater(mContext, mCallback.getContentLayout(), content);
-                    content.addView(mContentView, params);
+                    View view = ViewUtil.inflater(mCallback.getContentLayout(), mContentView);
+                    mContentView.addView(view, params);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        } else {
-            mContentView = mPtrFrameLayout;
         }
     }
 
@@ -125,6 +127,8 @@ public class BasicDelegate {
         initRecyclerView(content);
 
         initPtrFrameLayout(content);
+
+        addPageContent(content);
     }
 
     /**

@@ -14,7 +14,7 @@ package io.github.thismj.basic.library;
 
 public class BasicConstant {
 
-    public static final String FEED_ENDPOINT = "";
+    public static final String FEED_ENDPOINT = "http://xlab-tech.com:45675/pci-user-test/api/";
 
     /**
      * manager keys

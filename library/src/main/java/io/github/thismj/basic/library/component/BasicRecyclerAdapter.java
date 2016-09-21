@@ -78,7 +78,7 @@ public abstract class BasicRecyclerAdapter<M, H extends BasicRecyclerHolder> ext
         try {
             Constructor c = mHolder.getDeclaredConstructor(getClass(), View.class);
 
-            holder = (H) c.newInstance(this, ViewUtil.inflater(mContext, viewType, parent));
+            holder = (H) c.newInstance(this, ViewUtil.inflater(viewType, parent));
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();

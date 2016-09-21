@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,9 @@ public class MainActivity extends BasicActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        List<MainEntity> entities = new ArrayList<>();
+        ViewUtil.showLoading(getContentView());
+
+        final List<MainEntity> entities = new ArrayList<>();
 
         for (int i = 0; i < 15; i++) {
             MainEntity entity = new MainEntity();
@@ -30,21 +33,34 @@ public class MainActivity extends BasicActivity {
             entities.add(entity);
         }
 
-        setListData(entities, new BasicDelegate.SimpleRecycler<MainEntity, ItemMainBinding>() {
-
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void bindItemData(ItemMainBinding bind, MainEntity model, int position) {
-                ViewUtil.setText(bind.tvName, model.name);
-                ViewUtil.setText(bind.tvDes, model.des);
-            }
+            public void run() {
+                setListData(entities, new BasicDelegate.SimpleRecycler<MainEntity, ItemMainBinding>() {
 
-            @Override
-            public void onItemClick(MainEntity model, int position) {
-                startActivity(new Intent(MainActivity.this, SecondActivity.class));
+                    @Override
+                    public void bindItemData(ItemMainBinding bind, MainEntity model, int position) {
+                        ViewUtil.setText(bind.tvName, model.name);
+                        ViewUtil.setText(bind.tvDes, model.des);
+                    }
+
+                    @Override
+                    public void onItemClick(MainEntity model, int position) {
+                        startActivity(new Intent(MainActivity.this, SecondActivity.class));
+                    }
+                });
+
+                ViewUtil.showContent(getContentView());
             }
-        });
+        }, 3000);
+
 
         setToolBarTitle("主页");
+    }
+
+    @Override
+    public void initRecyclerView(RecyclerView recyclerView) {
+        super.initRecyclerView(recyclerView);
     }
 
     @Override

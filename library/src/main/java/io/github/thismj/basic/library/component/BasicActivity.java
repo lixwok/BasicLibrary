@@ -105,6 +105,10 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
         return INVALID_LAYOUT;
     }
 
+    public ViewGroup getContentView() {
+        return mDelegate.getContentView();
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,9 +141,6 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
 
         //添加页面模式布局
         addComponentContent();
-
-        //添加页面内容布局
-        addPageContent();
 
         //变色透明状态栏设置
         immerseStatus();
@@ -230,8 +231,7 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
                 && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 
             WindowManager.LayoutParams winParams = window.getAttributes();
-            winParams.flags |= (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS |
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            winParams.flags |= (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setAttributes(winParams);
             ViewGroup contentView = ViewUtil.find(this, android.R.id.content);
             View statusBarView = new View(this);
@@ -259,16 +259,9 @@ public class BasicActivity extends AppCompatActivity implements BasicDelegate.De
         mCoordinatorLayout = ViewUtil.find(this, pageContainer);
 
         if (mCoordinatorLayout != null) {
-            View componentView = ViewUtil.inflater(this, getComponentLayout(), mCoordinatorLayout);
+            View componentView = ViewUtil.inflater(getComponentLayout(), mCoordinatorLayout);
             mCoordinatorLayout.addView(componentView);
         }
-    }
-
-    /**
-     * 添加页面内容,列表页模式除外
-     */
-    private void addPageContent() {
-        mDelegate.addPageContent(mCoordinatorLayout);
     }
 
     /**
